@@ -7,7 +7,8 @@
 <body>
 <div class="legend">
     <button type="button" data-id="rain">Rain</button>
-    <button type="button" data-id="temp">Temperature</i></button>
+    <button type="button" data-id="temp">Temperature</button>
+    <button type="button" data-id="image">Image</button>
 </div>
 <div id="map" style="width: 500px;height: 500px;">
 </body>
@@ -24,7 +25,21 @@
         var WEST            = -90;
         var SOUTH           = 180;
         var EAST            = 90;
-        var RADIUS          = 4525;
+        var RADIUS          = 4500;
+        var northBound      = 50.7;
+        var eastBound       = 15.4;
+        var westBound       = -16;
+        var southBound      = 30.5;
+        var opt             = {
+                    opacity : 0.5
+        };
+        var imageBounds     = {
+                    north   : northBound,
+                    south   : southBound,
+                    east    : eastBound,
+                    west    : westBound
+        };
+        var path            = 'image.png';
         var typeOfMap       = 'rain';
         var gradientHeat    = [
             '#7e0e7d', '#931393', '#c61dc6', '#e022df', '#4421a8', '#3e1fc4', '#4227fb', '#1157e2', '#1474e3',
@@ -44,6 +59,14 @@
             center:  new google.maps.LatLng(40.5, 1.5),
             mapTypeId: 'terrain'
         });
+
+
+        // Create an image layer
+        imgLayer = new google.maps.GroundOverlay(
+            path,
+            imageBounds,
+            opt
+        );
 
         // Initiate the gradient map for rain layer
         var heatMap = new google.maps.visualization.HeatmapLayer({
@@ -77,8 +100,6 @@
         /* Change Heatmap values */
         function defineShapesLayer() {
             /* Define heat map layer */
-            if(shapes.length) removeHeatLayer();
-
             for(var key in layerData) {
                 var lat = layerData[key].latitude;
                 var lng = layerData[key].longitude;
@@ -133,6 +154,19 @@
                 }
             }
             heatMap.setOptions({data: colorData});
+            heatMap.setMap(map);
+        }
+
+        // Show the specific type of map image layer
+        function showImageLayer() {
+            imgLayer.setMap(map);
+        }
+
+        // Remove all layers
+        function removeAllLayers() {
+            if(shapes.length) removeHeatLayer();
+            imgLayer.setMap(null);
+            heatMap.setMap(null);
         }
 
         /* ------------------------- Triggers -------------------------  */
@@ -140,13 +174,16 @@
         /* Change type of Map */
         $(".legend button").click(function(){
             typeOfMap = $(this).attr('data-id');
+            removeAllLayers();
+
             if(typeOfMap === 'temp') {
-                heatMap.setMap(null);
                 defineShapesLayer();
+
             } else if(typeOfMap === 'rain') {
-                removeHeatLayer();
                 defineGradientLayer();
-                heatMap.setMap(map);
+
+            } else if(typeOfMap === 'image') {
+                showImageLayer();
             }
         });
     }
