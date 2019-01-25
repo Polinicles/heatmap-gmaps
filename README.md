@@ -25,7 +25,7 @@ Check if it's working on [http://localhost:8080](http://localhost:8080)
 
 ## Testing
 
-The use is very simple. It gets the data from `data.json` and prints a temperature or rain layer depending which button you click on.
+The use is very simple. It gets the data from `data.json` and prints a temperature or rain layer depending which button you click on.  Also, a fixed image layer has been added (every button displays a different layer).
 
 ### Temperature layer
 
